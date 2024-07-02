@@ -1,0 +1,11 @@
+all:
+  hosts:                                    # Mendefinisikan bahwa ini host
+    server_ubuntu:                                # Nama dari host
+      ansible_connection: ssh               # protocol yang digunakan
+      ansible_host: "10.70.93.7"         # Alamat Host
+      ansible_port: "55000"
+      ansible_user: root                 # Username Host
+      ansible_password: root
+      ansible_python_interpreter: /usr/bin/python3
+      git_repo: "https://github.com/FerryRama/ansible"
+
