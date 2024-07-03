@@ -1,32 +1,41 @@
-- name: install and deploy html
-  hosts: server_ubuntu
-  become: yes
+- name: Testing Ansible Localhost
+  hosts: localhost
   tasks:
-    - name: Update apt package cache
-      apt:
-        update_cache: yes
-    - name: install git
-      apt:
-        name: git
-    - name: create web server directory
-      file:
-        path: /var/www/html
+    - name: execute command 'ls'
+      changed_when: false
+      command: ls
+
+    - name: check if file exist
+      stat:
+        path: "{{ directory_file }}/test.txt"
+      register: stat_file
+
+    - name: Creates directory
+      ansible.builtin.file:
+        path: "{{ directory_file }}"
         state: directory
-        mode: 0755
-    - name: deploy code from gitlab
-      git:
-        repo: "{{ git_repo }}"
-        accept_hostkey: yes
-        dest: /var/www/html/
-        version: ansible2
-    - name: Install Apache
-      apt:
-        name: apache2
+
+    - name: create file on home dir
+      command: touch "{{ directory_file }}/test.txt"
+      changed_when: not stat_file.stat.exists
+
+    - name: insert text line
+      lineinfile:
+        path:  "{{ directory_file }}/test.txt"
+        line: Hello World
         state: present
-    - name: Install Apache Utils
-      apt:
-        name: apache2-utils
-    - name: Start Apache service
-      service:
-        name: apache2
-        state: started
+
+    - name: insert after text line
+      lineinfile:
+        path:  "{{ directory_file }}/test.txt"
+        line: Hello World 2
+        insertafter: 2
+        state: present
+    
+    - name: Insert a line after a specific pattern
+      lineinfile:
+        path:  "{{ directory_file }}/test.txt"
+        line: "This is the new line"
+        insertafter: "^Pattern to match"
+    
+ 
