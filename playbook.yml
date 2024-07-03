@@ -1,5 +1,38 @@
-- name: install and deploy html
-  hosts: server_ubuntu
+- name: install and deploy to server shafly
+  hosts: server_shaf
+  become: yes
+  tasks:
+    - name: Update apt package cache
+      apt:
+        update_cache: yes
+    - name: install git
+      apt:
+        name: git
+    - name: create web server directory
+      file:
+        path: /var/www/html
+        state: directory
+        mode: 0755
+    - name: deploy code from gitlab
+      git:
+        repo: "{{ git_repo }}"
+        accept_hostkey: yes
+        dest: /var/www/html/
+        version: ansible2
+    - name: Install Apache
+      apt:
+        name: apache2
+        state: present
+    - name: Install Apache Utils
+      apt:
+        name: apache2-utils
+    - name: Start Apache service
+      service:
+        name: apache2
+        state: started
+
+- name: install and deploy to server ferry
+  hosts: server_ferry
   become: yes
   tasks:
     - name: Update apt package cache
